@@ -1,6 +1,8 @@
 package util
 
-import "github.com/cakirmuha/auction-bid-tracker/model"
+import (
+	"github.com/cakirmuha/auction-bid-tracker/model"
+)
 
 type Node struct {
 	Value model.Bid
@@ -14,15 +16,12 @@ type LinkedList struct {
 }
 
 // Appends node n to list s
-func (s *LinkedList) Append(n *Node) {
+func (s *LinkedList) Prepend(n *Node) {
 	if s.Head == nil {
 		s.Head = n
 	} else {
-		head := s.Head
-		for head.Next != nil {
-			head = head.Next
-		}
-		head.Next = n
+		n.Next = s.Head
+		s.Head = n
 	}
 
 	s.Size++

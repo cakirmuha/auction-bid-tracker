@@ -20,7 +20,7 @@ func (db *DB) SaveUserBidOnItem(bid model.Bid) error {
 			Value: bid,
 		}
 
-		list.Append(n)
+		list.Prepend(n)
 		db.cache.itemBidCache.Store(bid.ItemID, list)
 		return nil
 	}
@@ -32,7 +32,7 @@ func (db *DB) SaveUserBidOnItem(bid model.Bid) error {
 		n := &util.Node{
 			Value: bid,
 		}
-		list.Append(n)
+		list.Prepend(n)
 		db.cache.itemBidCache.Store(bid.ItemID, list)
 		return nil
 	}
