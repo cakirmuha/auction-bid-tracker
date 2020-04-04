@@ -19,7 +19,7 @@ func getAllBidsByItem(c echo.Context) error {
 
 	bids, err := cc.DB().GetAllBidsByItemID(uint32(id))
 	if err != nil {
-		return model.NewApiError(model.ApiErrorNotAcceptable, err.Error(), nil)
+		return model.NewApiError(model.ApiErrorNotFound, err.Error(), nil)
 	}
 
 	return service.ApiResponse(c, http.StatusOK, bids)
@@ -35,7 +35,7 @@ func getCurrentWinningBidByItem(c echo.Context) error {
 
 	bid, err := cc.DB().GetCurrentWinningBidByItemID(uint32(id))
 	if err != nil {
-		return model.NewApiError(model.ApiErrorNotAcceptable, err.Error(), nil)
+		return model.NewApiError(model.ApiErrorNotFound, err.Error(), nil)
 	}
 
 	return service.ApiResponse(c, http.StatusOK, bid)

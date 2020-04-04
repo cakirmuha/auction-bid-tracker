@@ -8,11 +8,11 @@ import (
 )
 
 func (db *DB) GetItemNameByID(itemID uint32) (*string, error) {
-	db.cache.userMu.RLock()
-	user, ok := db.cache.userCache[itemID]
-	db.cache.userMu.Lock()
+	db.cache.itemMu.RLock()
+	item, ok := db.cache.itemCache[itemID]
+	db.cache.itemMu.RUnlock()
 	if ok {
-		return &user.Name, nil
+		return &item.Name, nil
 	}
 	return nil, fmt.Errorf("item(%v) not available on the system", itemID)
 }
