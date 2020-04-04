@@ -8,8 +8,8 @@ info:
 tags:
   - name: user
     description: User operations
-  - name: question
-    description: Question operations
+  - name: item
+    description: Item operations
 paths:
 components:
   schemas:

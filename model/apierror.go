@@ -18,6 +18,8 @@ const (
 	ApiErrorNotFound   = http.StatusNotFound
 	ApiErrorBadRequest = http.StatusBadRequest
 	ApiErrorInternal   = http.StatusInternalServerError
+
+	ApiErrorNotAcceptable = http.StatusNotAcceptable
 )
 
 // NewApiError is used to respond with a message and code
