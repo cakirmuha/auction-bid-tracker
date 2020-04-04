@@ -6,5 +6,5 @@ type Bid struct {
 	ItemID   uint32 `json:"item_id"`
 	ItemName string `json:"item_name,omitempty"`
 	Amount   uint64 `json:"amount"`
-	BidTime  uint64 `json:"bid_time,omitempty"`
+	BidTime  int64  `json:"bid_time,omitempty"`
 }

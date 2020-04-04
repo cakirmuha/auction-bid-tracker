@@ -15,12 +15,22 @@ func (s *ServerContext) SetupHandlers() {
 	api, endSetupFunc := s.Context.SetupHandlers(handlerPrefix, nil)
 
 	var (
-		_ = service.EnsureContentTypeFunc(echo.MIMEApplicationJSON)
+		jsonBody = service.EnsureContentTypeFunc(echo.MIMEApplicationJSON)
 	)
 
 	{
 		fs := http.FileServer(assets.Assets)
 		api.GET("/assets/*", echo.WrapHandler(http.StripPrefix(handlerPrefix+"/assets/", fs)), service.NoCacheMiddleware).Name = "GetStaticAssets"
+	}
+	{
+		g := api.Group("/user")
+		g.POST("/bid", createUserBid, jsonBody).Name = "createUserBid"
+		g.GET("/:id/items", getAllItemsByUser).Name = "getAllItemsByUser"
+	}
+	{
+		g := api.Group("/item")
+		g.GET("/:id/bids", getAllBidsByItem).Name = "getAllBidsByItem"
+		g.GET("/:id/bids/winning", getCurrentWinningBidByItem).Name = "getCurrentWinningBidByItem"
 	}
 	endSetupFunc()
 }

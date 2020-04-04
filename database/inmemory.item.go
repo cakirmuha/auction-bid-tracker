@@ -7,6 +7,16 @@ import (
 	"github.com/cakirmuha/auction-bid-tracker/util"
 )
 
+func (db *DB) GetItemNameByID(itemID uint32) (*string, error) {
+	db.cache.userMu.RLock()
+	user, ok := db.cache.userCache[itemID]
+	db.cache.userMu.Lock()
+	if ok {
+		return &user.Name, nil
+	}
+	return nil, fmt.Errorf("item(%v) not available on the system", itemID)
+}
+
 func (db *DB) GetCurrentWinningBidByItemID(itemID uint32) (*model.Bid, error) {
 	val, ok := db.cache.itemBidCache.Load(itemID)
 	if !ok {
@@ -16,25 +26,19 @@ func (db *DB) GetCurrentWinningBidByItemID(itemID uint32) (*model.Bid, error) {
 	itemBidList := val.(util.LinkedList)
 	leadingBid := itemBidList.Head.Value
 
-	// Set item name
-	db.cache.itemMu.RLock()
-	item, ok := db.cache.itemCache[itemID]
-	db.cache.itemMu.Lock()
-	if ok {
-		leadingBid.ItemName = item.Name
-	} else {
-		return nil, fmt.Errorf("item(%v) not available on the system", itemID)
+	// Set Item Name
+	itemName, err := db.GetItemNameByID(itemID)
+	if err != nil {
+		return nil, err
 	}
+	leadingBid.ItemName = *itemName
 
-	// Set user name
-	db.cache.userMu.RLock()
-	user, ok := db.cache.userCache[leadingBid.UserID]
-	db.cache.userMu.Lock()
-	if ok {
-		leadingBid.UserName = user.Name
-	} else {
-		return nil, fmt.Errorf("user(%v) not available on the system", itemID)
+	// Set User Name
+	userName, err := db.GetUserNameByID(leadingBid.UserID)
+	if err != nil {
+		return nil, err
 	}
+	leadingBid.UserName = *userName
 
 	return &leadingBid, nil
 }
@@ -45,39 +49,29 @@ func (db *DB) GetAllBidsByItemID(itemID uint32) ([]model.Bid, error) {
 		return nil, fmt.Errorf("there is no bid for item(%v)", itemID)
 	}
 
-	var (
-		bids     []model.Bid
-		itemName string
-	)
+	var bids []model.Bid
 
 	itemBidList := val.(util.LinkedList)
 	slice := util.LinkedList2Slice(itemBidList)
 
-	// Set item name
-	db.cache.itemMu.RLock()
-	item, ok := db.cache.itemCache[itemID]
-	db.cache.itemMu.Lock()
-	if ok {
-		itemName = item.Name
-	} else {
-		return nil, fmt.Errorf("item(%v) not available on the system", itemID)
+	// Set Item Name
+	itemName, err := db.GetItemNameByID(itemID)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, s := range slice {
 		s := s
 
 		// Set item name
-		s.ItemName = itemName
+		s.ItemName = *itemName
 
-		// Set user name
-		db.cache.userMu.RLock()
-		user, ok := db.cache.userCache[s.UserID]
-		db.cache.userMu.Lock()
-		if ok {
-			s.UserName = user.Name
-		} else {
-			return nil, fmt.Errorf("user(%v) not available on the system", itemID)
+		// Set User Name
+		userName, err := db.GetUserNameByID(s.UserID)
+		if err != nil {
+			return nil, err
 		}
+		s.UserName = *userName
 
 		bids = append(bids, s)
 	}
@@ -96,19 +90,16 @@ func (db *DB) GetAllItemsByUserID(userID uint32) ([]model.Item, error) {
 		itemID := k.(uint32)
 		if itemBidList.HasUserBidOnItem(userID) {
 
-			// Set item name
-			db.cache.itemMu.RLock()
-			item, ok := db.cache.itemCache[itemID]
-			db.cache.itemMu.Lock()
-			if ok {
-				items = append(items, model.Item{
-					ID:   itemID,
-					Name: item.Name,
-				})
-			} else {
-				err = fmt.Errorf("item(%v) not available on the system", itemID)
+			// Set Item Name
+			itemName, err2 := db.GetItemNameByID(itemID)
+			if err2 != nil {
+				err = err2
 				return false
 			}
+			items = append(items, model.Item{
+				ID:   itemID,
+				Name: *itemName,
+			})
 		}
 		return true
 	})
