@@ -1,0 +1,30 @@
+openapi: 3.0.1
+servers:
+  - url: 'http://localhost:8181/api/v1'
+info:
+  title: Auction Bid Tracker
+  description: Server for **Auction Bid Tracker**
+  version: 0.0.1
+tags:
+  - name: user
+    description: User operations
+  - name: question
+    description: Question operations
+paths:
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        data:
+          type: object
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+            type:
+              type: string
+            message:
+              type: string

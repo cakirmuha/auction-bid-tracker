@@ -13,3 +13,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+*.sum
+.DS_Store
+.idea/
+/cmd/*/assets/assets_vfsdata.go
+/bid.tracker
