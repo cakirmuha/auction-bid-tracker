@@ -10,9 +10,177 @@ tags:
     description: User operations
   - name: item
     description: Item operations
+  - name: bid
+    description: Bid operations
 paths:
+  '/user/bid':
+    post:
+      tags:
+        - user
+        - item
+        - bid
+      summary: Create Bid For user
+      operationId: createUserBid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bid'
+        description: Bid object to create
+        required: true
+      responses:
+        '201':
+          description: successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: User or item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '406':
+          description: Bid amount must be greater than the highest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  '/user/:userid/items':
+    get:
+      tags:
+        - user
+        - item
+      summary: Get all items on which a user has bid
+      parameters:
+        - name: userid
+          in: path
+          required: true
+          schema:
+            type: integer
+      operationId: getAllItemsByUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+        '400':
+          description: Invalid user id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: User not found / Item having bid not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  '/item/:itemid/bids':
+    get:
+      tags:
+        - item
+        - bid
+      summary: Get all bids for item
+      parameters:
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: integer
+      operationId: getAllBidsByItem
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bid'
+        '400':
+          description: Invalid item id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: There is no bid for item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  '/item/:itemid/bids/winning':
+    get:
+      tags:
+        - item
+        - bid
+      summary: Get current winning bid for item
+      parameters:
+        - name: itemid
+          in: path
+          required: true
+          schema:
+            type: integer
+      operationId: getCurrentWinningBidByItem
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bid'
+        '400':
+          description: Invalid item id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: There is no bid for item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Bid:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        user_name:
+          type: string
+        item_id:
+          type: integer
+        item_name:
+          type: string
+        amount:
+          type: integer
+        bid_time:
+          type: integer
     ApiResponse:
       type: object
       properties:
