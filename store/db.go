@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/cakirmuha/auction-bid-tracker/model"
@@ -30,11 +31,33 @@ func New(ctx context.Context) (*DB, error) {
 	}
 
 	// Set initial mock users and items
-	c.userCache = model.Users
-	c.itemCache = model.Items
+	c.userCache = CreateMockUsers()
+	c.itemCache = CreateMockItems()
 
 	return &DB{
 		ctx:   ctx,
 		cache: &c,
 	}, nil
+}
+
+func CreateMockUsers() map[uint32]model.User {
+	users := make(map[uint32]model.User)
+	for i := 1; i <= 100; i++ {
+		users[uint32(i)] = model.User{
+			ID:   uint32(i),
+			Name: fmt.Sprintf("User#%v", i),
+		}
+	}
+	return users
+}
+
+func CreateMockItems() map[uint32]model.Item {
+	items := make(map[uint32]model.Item)
+	for i := 1; i <= 4; i++ {
+		items[uint32(i)] = model.Item{
+			ID:   uint32(i),
+			Name: fmt.Sprintf("Item#%v", i),
+		}
+	}
+	return items
 }

@@ -30,6 +30,10 @@ Server for Auction Bid Tracker
       -log string
             Log level (debug, info, warn, error) (default "debug")
             
+## Concurrency Test
+
+     go test ./cmd/bid.tracker/concurrency_test.go
+            
 ## Generate
 
 Generated API spec (openapi.yml) is served at `/api/v1/assets/openapi.yml`
