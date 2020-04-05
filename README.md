@@ -57,4 +57,4 @@ Maps are not thread-safe by default in golang, so sync.Map can be used to handle
 
 ### Solution test
 
-Application can tested using Goroutines(eg. `go test ./cmd/bid.tracker/concurrency_test.go`). Bid request is sent by all 100 mock users for an item, there will be no runtime error, and winning bid will be equal to the highest bid amount of users.
+Application can be tested using Goroutines(eg. `go test ./cmd/bid.tracker/concurrency_test.go`). Bid request is sent by all 100 mock users for an item, there will be no runtime error, and winning bid will be equal to the highest bid amount of users.
