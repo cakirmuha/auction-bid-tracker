@@ -8,12 +8,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 
-	"github.com/cakirmuha/auction-bid-tracker/database"
+	"github.com/cakirmuha/auction-bid-tracker/store"
 )
 
 type SomeContext interface {
 	Echo() *echo.Echo
-	DB() *database.DB
+	DB() *store.DB
 }
 
 type Context struct {
@@ -24,7 +24,7 @@ type Context struct {
 	ec     *echo.Echo
 	logger echo.Logger
 
-	db *database.DB
+	db *store.DB
 }
 
 func (c *Context) BuildInfo() string {
@@ -35,7 +35,7 @@ func (c *Context) Echo() *echo.Echo {
 	return c.ec
 }
 
-func (c *Context) DB() *database.DB {
+func (c *Context) DB() *store.DB {
 	return c.db
 }
 
@@ -57,7 +57,7 @@ func New(ctx context.Context, eLogger echo.Logger, opts ...Option) (*Context, er
 	}
 
 	if serviceOpts.db {
-		db, err := database.New(ctx)
+		db, err := store.New(ctx)
 		if err != nil {
 			return nil, errors.Wrap(err, "DB")
 		}

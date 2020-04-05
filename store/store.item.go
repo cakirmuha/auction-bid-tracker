@@ -1,4 +1,4 @@
-package database
+package store
 
 import (
 	"fmt"
@@ -79,12 +79,7 @@ func (db *DB) GetAllBidsByItemID(itemID uint32) ([]model.Bid, error) {
 	return bids, nil
 }
 
-func (db *DB) GetAllItemsByUserID(userID uint32) ([]model.Item, error) {
-	var (
-		items []model.Item
-		err   error
-	)
-
+func (db *DB) GetAllItemsByUserID(userID uint32) (items []model.Item, err error) {
 	db.cache.itemBidCache.Range(func(k, v interface{}) bool {
 		itemBidList := v.(util.LinkedList)
 		itemID := k.(uint32)
@@ -103,5 +98,5 @@ func (db *DB) GetAllItemsByUserID(userID uint32) ([]model.Item, error) {
 		}
 		return true
 	})
-	return items, nil
+	return
 }
