@@ -4,19 +4,18 @@ import (
 	"fmt"
 
 	"github.com/cakirmuha/auction-bid-tracker/model"
-	"github.com/cakirmuha/auction-bid-tracker/util"
 )
 
 func (db *DB) SaveUserBidOnItem(bid model.Bid) error {
 	val, ok := db.cache.itemBidCache.Load(bid.ItemID)
 	if !ok {
 		// New singly linked list
-		list := util.LinkedList{
+		list := model.BidLinkedList{
 			Size: 0,
 		}
 
 		// Add new node
-		n := &util.Node{
+		n := &model.BidNode{
 			Value: bid,
 		}
 
@@ -25,11 +24,11 @@ func (db *DB) SaveUserBidOnItem(bid model.Bid) error {
 		return nil
 	}
 
-	list := val.(util.LinkedList)
+	list := val.(model.BidLinkedList)
 	leadingBid := list.Head.Value
 	if bid.Amount > leadingBid.Amount {
 		// Add new node
-		n := &util.Node{
+		n := &model.BidNode{
 			Value: bid,
 		}
 		list.Prepend(n)

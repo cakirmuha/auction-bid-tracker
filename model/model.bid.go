@@ -8,3 +8,53 @@ type Bid struct {
 	Amount   uint64 `json:"amount"`
 	BidTime  int64  `json:"bid_time,omitempty"`
 }
+
+type BidNode struct {
+	Value Bid
+	Next  *BidNode
+}
+
+// Singly linked list
+type BidLinkedList struct {
+	Head *BidNode
+	Size uint32
+}
+
+// Appends node n to list s
+func (s *BidLinkedList) Prepend(n *BidNode) {
+	if s.Head == nil {
+		s.Head = n
+	} else {
+		n.Next = s.Head
+		s.Head = n
+	}
+
+	s.Size++
+}
+
+// Has user bid on item
+func (s *BidLinkedList) HasUserBidOnItem(userID uint32) bool {
+	temp := s.Head
+	for temp != nil {
+		if temp.Value.UserID == userID {
+			return true
+		}
+		temp = temp.Next
+	}
+
+	return false
+}
+
+func (s *BidLinkedList) LinkedList2Slice() (slice []Bid) {
+	if s.Head == nil {
+		return
+	}
+
+	head := s.Head
+	for head.Next != nil {
+		slice = append(slice, head.Value)
+		head = head.Next
+	}
+	slice = append(slice, head.Value)
+	return
+}

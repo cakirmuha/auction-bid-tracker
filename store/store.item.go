@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/cakirmuha/auction-bid-tracker/model"
-	"github.com/cakirmuha/auction-bid-tracker/util"
 )
 
 func (db *DB) GetItemNameByID(itemID uint32) (*string, error) {
@@ -23,7 +22,7 @@ func (db *DB) GetCurrentWinningBidByItemID(itemID uint32) (*model.Bid, error) {
 		return nil, fmt.Errorf("there is no winning bid for item(%v)", itemID)
 	}
 
-	itemBidList := val.(util.LinkedList)
+	itemBidList := val.(model.BidLinkedList)
 	leadingBid := itemBidList.Head.Value
 
 	// Set Item Name
@@ -51,8 +50,8 @@ func (db *DB) GetAllBidsByItemID(itemID uint32) ([]model.Bid, error) {
 
 	var bids []model.Bid
 
-	itemBidList := val.(util.LinkedList)
-	slice := util.LinkedList2Slice(itemBidList)
+	itemBidList := val.(model.BidLinkedList)
+	slice := itemBidList.LinkedList2Slice()
 
 	// Set Item Name
 	itemName, err := db.GetItemNameByID(itemID)
@@ -81,7 +80,7 @@ func (db *DB) GetAllBidsByItemID(itemID uint32) ([]model.Bid, error) {
 
 func (db *DB) GetAllItemsByUserID(userID uint32) (items []model.Item, err error) {
 	db.cache.itemBidCache.Range(func(k, v interface{}) bool {
-		itemBidList := v.(util.LinkedList)
+		itemBidList := v.(model.BidLinkedList)
 		itemID := k.(uint32)
 		if itemBidList.HasUserBidOnItem(userID) {
 
